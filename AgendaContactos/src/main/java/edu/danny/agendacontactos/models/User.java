@@ -6,9 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a User Entity
@@ -49,9 +48,13 @@ public class User implements UserDetails  {
     private boolean enabled;
     // Defining a Many-to-One relation on SQL.
     // @see https://www.adictosaltrabajo.com/2020/04/02/hibernate-onetoone-onetomany-manytoone-y-manytomany/
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.PERSIST,CascadeType.PERSIST, CascadeType.PERSIST})
-    @JoinColumn(name = "role_id")
-    private UserRole role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_rol",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id"))
+    private Set<UserRole> roles = new HashSet<>();
+
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
@@ -62,7 +65,9 @@ public class User implements UserDetails  {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role.name));
+        return this.roles.stream()
+                .map(rol -> new SimpleGrantedAuthority(rol.getName()))
+                .collect(Collectors.toList());
     }
 
     /**

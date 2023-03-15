@@ -6,6 +6,7 @@ import edu.danny.agendacontactos.services.JwtService;
 import edu.danny.agendacontactos.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,10 +49,12 @@ public class UserController {
     }
 
     @PostMapping("/verify")
-    public UserDetails verify(HttpServletRequest request) {
-        String jwt = request.getHeader("Authorization").replaceAll("^Bearer\\s+", "");
-        return userService.loadUserByUsername(
-                jwtService.extractUsername(jwt)
-        );
+    @PreAuthorize("hasRole('ADMIN')")
+    public String verify(HttpServletRequest request) {
+//        String jwt = request.getHeader("Authorization").replaceAll("^Bearer\\s+", "");
+//        return userService.loadUserByUsername(
+//                jwtService.extractUsername(jwt)
+//        );
+        return "Admin";
     }
 }

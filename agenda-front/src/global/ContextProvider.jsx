@@ -24,7 +24,7 @@ const ContextProvider = () => {
         
         const token = localStorage.getItem(token)
         if (token) {
-            
+            postWithToken("")
         }
 
         return () => mounted = false

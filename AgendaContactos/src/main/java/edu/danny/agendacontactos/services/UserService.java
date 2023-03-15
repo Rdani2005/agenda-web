@@ -70,13 +70,19 @@ public class UserService implements UserDetailsService {
      */
     public User addUser(RegisterRequest request) {
 
+        Set<UserRole> roles = new HashSet<>();
+        for (Long roleId : request.getRoleIds()) {
+            UserRole role = userRoleService.getById(roleId);
+            roles.add(role);
+        }
+
         var user = User.builder()
                 .identification(request.getIdentification())
                 .name(request.getName())
                 .login(request.getLogin())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(userRoleService.getById(request.getRole_id()))
+                .roles((Set<UserRole>) roles)
                 .register_day(new Date())
 
                 .build();
@@ -171,13 +177,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByLogin(username).orElseThrow();
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.getAuthorities()
-        );
+        return user;
     }
 }

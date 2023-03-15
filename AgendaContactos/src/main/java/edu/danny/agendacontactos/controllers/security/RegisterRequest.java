@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Class design to handle all user Sign up Request data as a JSON Body.
  * 
@@ -23,5 +25,6 @@ public class RegisterRequest {
     private String email;
     private String login;
     private String password;
-    private long role_id;
+    private List<Long> roleIds;
+
 }

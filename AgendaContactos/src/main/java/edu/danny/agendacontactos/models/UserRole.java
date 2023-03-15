@@ -26,11 +26,4 @@ public class UserRole {
     int id;
     @Column(name = "role_name", length = 50)
     String name;
-    @JsonIgnore
-    @OneToMany(mappedBy = "role", cascade = {
-            CascadeType.PERSIST,
-            CascadeType.PERSIST,
-            CascadeType.PERSIST,
-            CascadeType.PERSIST})
-    private List<User> contacts;
 }
