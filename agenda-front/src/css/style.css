@@ -1,3 +1,6 @@
+/*
+    For styling porpuses, we will just use tailwind
+*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

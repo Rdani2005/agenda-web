@@ -1,7 +1,7 @@
 package edu.danny.agendacontactos.services;
 
 import edu.danny.agendacontactos.controllers.security.AuthenticationRequest;
-import edu.danny.agendacontactos.controllers.security.AuthenticationResponse;
+import edu.danny.agendacontactos.responses.AuthenticationResponse;
 import edu.danny.agendacontactos.controllers.security.RegisterRequest;
 import edu.danny.agendacontactos.models.Token;
 import edu.danny.agendacontactos.models.TokenType;
@@ -9,18 +9,17 @@ import edu.danny.agendacontactos.models.User;
 import edu.danny.agendacontactos.models.UserRole;
 import edu.danny.agendacontactos.repositories.TokenRepository;
 import edu.danny.agendacontactos.repositories.UserRepository;
+import edu.danny.agendacontactos.responses.GlobalUserResponse;
+import edu.danny.agendacontactos.responses.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Service class for managing User objects.
@@ -48,8 +47,26 @@ public class UserService implements UserDetailsService {
      *
      * @return List of all users on bd.
      */
-    public ArrayList<User> getAll() {
-        return (ArrayList<User>) userRepository.findAll();
+    public ArrayList<GlobalUserResponse> getAll() {
+        List<User> usersBD = (ArrayList<User>) userRepository.findAll();
+        ArrayList<GlobalUserResponse> response = new ArrayList<GlobalUserResponse>();
+
+        for(User user : usersBD) {
+            response.add(
+                    GlobalUserResponse
+                            .builder()
+                            .id(user.getId())
+                            .login(user.getLogin())
+                            .identification(user.getIdentification())
+                            .name(user.getName())
+                            .email(user.getEmail())
+                            .roles(user.getRoles())
+                            .build()
+            );
+        }
+
+
+        return response;
     }
 
     /**
@@ -113,11 +130,24 @@ public class UserService implements UserDetailsService {
         var JwtToken = jwtService.generateToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, JwtToken);
-        return AuthenticationResponse.builder().token(JwtToken).build();
+
+        return AuthenticationResponse
+                .builder()
+                .token(JwtToken)
+                .user(
+                        UserInfoResponse.builder()
+                                .id(user.getId())
+                                .identification(user.getIdentification())
+                                .name(user.getName())
+                                .email(user.getEmail())
+                                .login(user.getLogin())
+                                .build()
+                )
+                .build();
     }
 
     /**
-     * Register a new user into the DB, without admin permitions.
+     * Register a new user into the DB, without admin permissions.
      *
      * @param request used to get user information.
      * @return Authentication response JWT
@@ -179,7 +209,6 @@ public class UserService implements UserDetailsService {
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByLogin(username).orElseThrow();
-
         return user;
     }
 }

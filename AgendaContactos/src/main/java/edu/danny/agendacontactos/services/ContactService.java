@@ -40,6 +40,15 @@ public class ContactService {
     }
 
     /**
+     * used to update contacts on db
+     * @param contact contact that we are updating
+     * @return new info
+     */
+    public Contact updateContact(Contact contact) {
+        return contactRepository.save(contact);
+    }
+
+    /**
      * Retrieves a Contact object by its ID
      *
      * @param id the ID of the Contact object to be retrieved
@@ -68,4 +77,8 @@ public class ContactService {
     public ArrayList<Contact> getAllByCountry(Country country) {
         return contactRepository.findByCountry(country);
     }
-}
+
+    public void DeleteContact(Contact contact) {
+        contactRepository.delete(contact);
+    }
+ }

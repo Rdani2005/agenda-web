@@ -1,15 +1,16 @@
 package edu.danny.agendacontactos.controllers;
 
 import edu.danny.agendacontactos.controllers.security.AuthenticationRequest;
-import edu.danny.agendacontactos.controllers.security.AuthenticationResponse;
+import edu.danny.agendacontactos.responses.AuthenticationResponse;
 import edu.danny.agendacontactos.controllers.security.RegisterRequest;
+import edu.danny.agendacontactos.models.User;
+import edu.danny.agendacontactos.responses.UserInfoResponse;
 import edu.danny.agendacontactos.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * Web controller of all User info for Sign in and Sign up
@@ -49,5 +50,22 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(userService.authenticate(request));
+    }
+
+    /**
+     * Entities for get user information
+     * @param user used for getting the user info
+     * @return Response entity
+     */
+    @GetMapping("/userinfo")
+    public ResponseEntity<UserInfoResponse> getUserInfo(Principal user) {
+        User userObj = (User) userService.loadUserByUsername(user.getName());
+        return ResponseEntity.ok(UserInfoResponse.builder()
+                .id(userObj.getId())
+                .identification(userObj.getIdentification())
+                .name(userObj.getName())
+                .email(userObj.getEmail())
+                .login(userObj.getLogin())
+                .build());
     }
 }

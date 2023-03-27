@@ -1,4 +1,4 @@
-package edu.danny.agendacontactos.controllers.security;
+package edu.danny.agendacontactos.responses;
 
 import edu.danny.agendacontactos.models.User;
 import lombok.AllArgsConstructor;
@@ -20,4 +20,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
     private String token;
+    private UserInfoResponse user;
 }

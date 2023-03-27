@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * @since 2023-03-05
  */
 @RestController
-@RequestMapping("/country")
+@RequestMapping("/api/v1/country")
 public class CountryController {
     @Autowired
     CountryService countryService;
@@ -26,7 +26,7 @@ public class CountryController {
      *
      * @return an ArrayList of Country objects.
      */
-    @GetMapping()
+    @GetMapping("/all")
     public ArrayList<Country> getAllCountries() {
         return countryService.getAllCountries();
     }
@@ -37,7 +37,7 @@ public class CountryController {
      * @param country a Country object containing the data of the new country.
      * @return the new Country object.
      */
-    @PostMapping()
+    @PostMapping("/add")
     public Country saveCountry(@RequestBody Country country) {
         return countryService.saveCountry(country);
     }

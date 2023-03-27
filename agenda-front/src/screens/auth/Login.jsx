@@ -1,5 +1,7 @@
-import React from 'react'
-import Ball from '../components/Ball'
+import React, { useContext, useState } from 'react'
+import { post } from '../../api'
+import Ball from '../../components/Ball'
+import { globalContext } from '../../global/ContextProvider'
 
 /**
  * A React functional component representing a login form.
@@ -8,6 +10,7 @@ import Ball from '../components/Ball'
  */
 const Login = () => {
 
+    const { auth, setAuth } = useContext(globalContext)
     // Declare state variables for the username and password inputs
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -22,8 +25,11 @@ const Login = () => {
         })
             .then(({ data }) => {
                 console.log(data)
+                console.log(data.user);
                 // Store token in local storage
                 localStorage.setItem("token", data.token)
+                setAuth(data.user)
+
             })
             .catch((e) => console.log(e))
     }

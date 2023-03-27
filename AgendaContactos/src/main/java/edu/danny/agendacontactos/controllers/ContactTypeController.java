@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * @since 2023-03-05
  */
 @RestController
-@RequestMapping("/contact-type")
+@RequestMapping("/api/v1/contact-type")
 public class ContactTypeController {
     @Autowired
     ContactTypeService contactTypeService;
@@ -26,7 +26,7 @@ public class ContactTypeController {
      *
      * @return an ArrayList of ContactType objects.
      */
-    @GetMapping()
+    @GetMapping("/all")
     public ArrayList<ContactType> getAll() {
         return contactTypeService.getAllTypes();
     }
@@ -37,7 +37,7 @@ public class ContactTypeController {
      * @param type a ContactType object containing the data of the new contact type.
      * @return the new ContactType object.
      */
-    @PostMapping()
+    @PostMapping("/add")
     public ContactType addType(@RequestBody ContactType type) {
         return contactTypeService.addType(type);
     }

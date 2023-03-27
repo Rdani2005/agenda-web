@@ -20,8 +20,9 @@ import java.util.Date;
  * @version 1.0
  * @since 2023-03-05
  */
+
 @RestController
-@RequestMapping("/contact")
+@RequestMapping("/api/v1/contacts")
 public class ContactController {
     @Autowired
     ContactService contactService;
@@ -37,7 +38,7 @@ public class ContactController {
      *
      * @return an ArrayList of Contact objects.
      */
-    @GetMapping()
+    @GetMapping("/all")
     public ArrayList<Contact> getContacts() {
         return contactService.getAll();
     }
@@ -81,7 +82,7 @@ public class ContactController {
      * @param contactDto a ContactDto object containing the data of the new contact.
      * @return the new Contact object.
      */
-    @PostMapping()
+    @PostMapping("/add")
     public Contact addContact(@RequestBody ContactDto contactDto) {
         Contact contact = new Contact();
         contact.setIdentification(contactDto.getIdentification());
@@ -95,5 +96,42 @@ public class ContactController {
         contact.setType(contactTypeService.getById(contactDto.getType_id()).get());
         contact.setCountry(countryService.getById(contactDto.getCountry_id()).get());
         return contactService.addContact(contact);
+    }
+
+
+
+    /**
+     * method used tu update the contact on DB
+     * @param id
+     * @param contactDto
+     * @return the updated information
+     */
+    @PutMapping(path = "/{id}")
+    public Contact updateContact(@PathVariable("id") Long id, @RequestBody ContactDto contactDto) {
+        
+        Contact contact = contactService.getById(id); //get contact by id
+        contact.setIdentification(contactDto.getIdentification());
+        contact.setName(contactDto.getName());
+        contact.setRegister_day(new Date());
+        contact.setBirth_day(contactDto.getBirth_day());
+        contact.setPhone(contactDto.getPhone());
+        contact.setMobile(contactDto.getMobile());
+        contact.setFax(contactDto.getFax());
+        contact.setEmail(contactDto.getEmail());
+        contact.setType(contactTypeService.getById(contactDto.getType_id()).get());
+        contact.setCountry(countryService.getById(contactDto.getCountry_id()).get());
+        return contactService.updateContact(contact);
+    }
+
+    /**
+     * Delete a contact by its id
+     * @param id id to filter the contact
+     * @return true in case of successful
+     */
+    @DeleteMapping(path = "/{id}")
+    public boolean DeleteContact(@PathVariable("id") Long id) {
+        Contact contact = contactService.getById(id);
+        contactService.DeleteContact(contact);
+        return true;
     }
 }

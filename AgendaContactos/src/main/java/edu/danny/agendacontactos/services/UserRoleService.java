@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 
 /**
  * Service class for managing User Role objects.
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class UserRoleService {
     
     private final UserRoleRepository userRoleRepository;
+
+    public ArrayList<UserRole> getAll() {return (ArrayList<UserRole>) userRoleRepository.findAll();}
 
     /**
      * Getting a single user role by its id.

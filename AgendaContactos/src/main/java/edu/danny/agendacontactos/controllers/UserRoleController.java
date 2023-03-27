@@ -5,10 +5,9 @@ import edu.danny.agendacontactos.services.UserRoleService;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 /**
  * Class that handles all user role information.
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @see <a href = "http://rdani2005.works" /> About the Creator </a>
  */
 @RestController
-@RequestMapping("/user-role")
+@RequestMapping("/api/v1/user-role")
 @RequiredArgsConstructor
 public class UserRoleController {
     
@@ -36,4 +35,11 @@ public class UserRoleController {
     public UserRole add(@RequestBody UserRole userRole) {
         return userRoleService.add(userRole);
     }
+
+    /**
+     * Get all user roles
+     * @return user role
+     */
+    @GetMapping("/all")
+    public ArrayList<UserRole> all() {return userRoleService.getAll();}
 }

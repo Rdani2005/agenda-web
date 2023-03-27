@@ -11,6 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 /**
  * Security Config file
@@ -40,6 +45,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
         http
+                .cors()
+                .configurationSource(corsConfigurationSource())
+                .and()
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
@@ -61,5 +69,19 @@ public class SecurityConfig {
 
         return http.build();
     }
-
+    /**
+     * Cors configuration for security, allowing just port 5173 on React
+     * @return Cors config
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173/"));
+        configuration.addAllowedMethod("*"); // all Methods
+        configuration.addAllowedHeader("*"); // all header
+        configuration.addExposedHeader("*"); // all exposed headers
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

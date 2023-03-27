@@ -1,36 +1,47 @@
-import React, { createContext, useState } from 'react'
-import { postWithToken } from '../api'
+import React, { createContext, useEffect, useState } from 'react'
+import { getWithToken, postWithToken } from '../api'
 
 export const globalContext = createContext()
 
-const ContextProvider = () => {
-
-    const [auth, setAuth] = useState({
-        id: "",
-        identification: "",
-        name: "",
-        register_day: "",
-        email: "",
-        login: ""
-    })
+/**
+ * Global variables used in this web app
+ */
+const ContextProvider = ({ children }) => {
 
 
-    const [globalUsers, setGlobalUsers] = useState([])
 
-    const [contacts, setContacts] = useState([])
+    // Authentication from user
+    const [auth, setAuth] = useState(null)
 
+
+    // Setting up the profile if there is any available token
     useEffect(() => {
         let mounted = true;
-        
-        const token = localStorage.getItem(token)
+
+        const token = localStorage.getItem("token")
         if (token) {
-            postWithToken("")
+            getWithToken("/v1/auth/userinfo")
+            .then(({ data }) => {
+                setAuth(data)
+            })
+            .catch(e => {
+                localStorage.removeItem("token")
+            })
         }
 
         return () => mounted = false
-    }, [])
+    }, [setAuth])
 
 
+    return (
+        <globalContext.Provider
+            value={{
+                auth, setAuth
+            }}
+        >
+            {children}
+        </globalContext.Provider>
+    )
 
 }
 
